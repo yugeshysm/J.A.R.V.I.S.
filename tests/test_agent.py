@@ -1,5 +1,12 @@
 import textwrap
+# In tests/test_agent.py - add at the top
+import os
 
+@pytest.fixture(autouse=True)
+def setup_livekit_env():
+    """Set mock environment variables for testing."""
+    os.environ.setdefault("LIVEKIT_API_KEY", "test-api-key")
+    os.environ.setdefault("LIVEKIT_URL", "ws://localhost:7880")
 import pytest
 from livekit.agents import AgentSession, inference, llm
 
