@@ -1,19 +1,23 @@
 {
   "name": "jarvis-frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/token.js",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@livekit/protocol": "latest",
     "@vitejs/plugin-react": "latest",
+    "livekit-client": "latest",
+    "livekit-server-sdk": "latest",
+    "lucide-react": "latest",
     "vite": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {}
 }
