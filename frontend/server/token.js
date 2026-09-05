@@ -1,3 +1,4 @@
+import "dotenv/config";
 import http from "node:http";
 import { randomUUID } from "node:crypto";
 import { AccessToken } from "livekit-server-sdk";
@@ -28,36 +29,17 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  if (req.method !== "GET" || req.url !== "/api/token") {
-    return json(res, 404, { error: "Not found" });
-  }
-
+  if (req.method !== "GET" || req.url !== "/api/token") return json(res, 404, { error: "Not found" });
   if (!livekitUrl || !apiKey || !apiSecret) {
-    return json(res, 500, {
-      error: "LIVEKIT_URL, LIVEKIT_API_KEY and LIVEKIT_API_SECRET are required.",
-    });
+    return json(res, 500, { error: "LIVEKIT_URL, LIVEKIT_API_KEY and LIVEKIT_API_SECRET are required." });
   }
 
   try {
     const room = `jarvis-${randomUUID().slice(0, 8)}`;
     const identity = `user-${randomUUID().slice(0, 8)}`;
-    const token = new AccessToken(apiKey, apiSecret, {
-      identity,
-      name: "J.A.R.V.I.S. User",
-      ttl: "1h",
-    });
-
-    token.addGrant({
-      roomJoin: true,
-      room,
-      canPublish: true,
-      canSubscribe: true,
-    });
-
-    token.roomConfig = new RoomConfiguration({
-      agents: [new RoomAgentDispatch({ agentName: "my-agent" })],
-    });
-
+    const token = new AccessToken(apiKey, apiSecret, { identity, name: "J.A.R.V.I.S. User", ttl: "1h" });
+    token.addGrant({ roomJoin: true, room, canPublish: true, canSubscribe: true });
+    token.roomConfig = new RoomConfiguration({ agents: [new RoomAgentDispatch({ agentName: "my-agent" })] });
     return json(res, 200, { serverUrl: livekitUrl, participantToken: await token.toJwt(), room, identity });
   } catch (error) {
     console.error("Token generation failed:", error);
@@ -65,6 +47,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, host, () => {
-  console.log(`J.A.R.V.I.S. token server listening on http://${host}:${port}`);
-});
+server.listen(port, host, () => console.log(`J.A.R.V.I.S. token server listening on http://${host}:${port}`));
